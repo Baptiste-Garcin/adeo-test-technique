@@ -1,19 +1,29 @@
 module.exports = function (args) {
-  const [nodePath, filePath, userArgs] = args;
+  const [nodePath, filePath, ...userArgs] = args;
 
-  if (!userArgs) {
+  if (!userArgs.length) {
     throw new Error('missing user arguments');
   }
 
-  const [command, value] = userArgs.split('=');
-
-  if (command !== '--filter' && command !== '--count') {
-    throw new Error(`unknown flag ${command}`);
+  if (userArgs.some(flag => !flag.startsWith('--filter=') && !flag.startsWith('--count'))) {
+    throw new Error(`unknown flag ${userArgs}`);
   }
 
-  if (!value && command === '--filter') {
-    throw new Error('missing value');
+  const commands = [];
+  const filterFlag = userArgs.find(flag => flag.startsWith('--filter'));
+  if (filterFlag) {
+    const [action, value] = filterFlag.split('=');
+    if (!value) {
+      throw new Error('missing value');
+    }
+
+    commands.push({ action, value });
   }
 
-  return [command, value];
+  const countFlag = userArgs.find(flag => flag.startsWith('--count'));
+  if (countFlag) {
+    commands.push({ action: '--count' });
+  }
+
+  return commands;
 };
