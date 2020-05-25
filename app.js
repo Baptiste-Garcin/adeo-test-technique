@@ -2,17 +2,12 @@
 
 const { data } = require('./data');
 const argumentParser = require('./modules/parsers/argumentParser');
-const filterCountries = require('./modules/filters/filterCountries');
-const countElementsByKey = require('./modules/counter/countElementsByKey');
+const filter = require('./modules/filters/filter');
+const countElements = require('./modules/counter/countElements');
 
-const [command, value] = argumentParser(process.argv);
+const args = argumentParser(process.argv);
 
-if (command === '--filter') {
-  const result = filterCountries(data, value);
-  console.log(JSON.stringify(result, null, 2));
-}
+const filteredResults = filter(args, data);
+const countedResults = countElements(args, filteredResults);
 
-if (command === '--count') {
-  const result = countElementsByKey(data);
-  console.log(JSON.stringify(result, null, 2));
-}
+console.log(JSON.stringify(countedResults, null, 2));

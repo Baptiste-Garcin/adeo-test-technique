@@ -4,9 +4,9 @@ const argumentParser = require('../../modules/parsers/argumentParser');
 
 describe('argument parsers', () => {
   it('--filter flag is found', () => {
-    const [action, value] = argumentParser(['/usr/bin/node', '/home/ernest/Projects/adeo/app.js', '--filter=ry']);
-    expect(action).equal('--filter');
-    expect(value).equal('ry');
+    const [filterFlag] = argumentParser(['/usr/bin/node', '/home/ernest/Projects/adeo/app.js', '--filter=ry']);
+    expect(filterFlag.action).equal('--filter');
+    expect(filterFlag.value).equal('ry');
   });
 
   it('handle unknown or missing flag', () => {
@@ -15,11 +15,18 @@ describe('argument parsers', () => {
   });
 
   it('handle missing value', () => {
-    expect(argumentParser.bind(undefined, ['/usr/bin/node', '/home/ernest/Projects/adeo/app.js', '--filter'])).throw('missing value');
+    expect(argumentParser.bind(undefined, ['/usr/bin/node', '/home/ernest/Projects/adeo/app.js', '--filter='])).throw('missing value');
   });
 
   it('--count flag is found', () => {
-    const [action] = argumentParser(['/usr/bin/node', '/home/ernest/Projects/adeo/app.js', '--count']);
-    expect(action).equal('--count');
+    const [counterFlag] = argumentParser(['/usr/bin/node', '/home/ernest/Projects/adeo/app.js', '--count']);
+    expect(counterFlag.action).equal('--count');
+  });
+
+  it('handle flag combo', () => {
+    const [filterAction, countAction] = argumentParser(['/usr/bin/node', '/home/ernest/Projects/adeo/app.js', '--filter=ry', '--count']);
+    expect(countAction.action).equal('--count');
+    expect(filterAction.action).equal('--filter');
+    expect(filterAction.value).equal('ry');
   });
 });
