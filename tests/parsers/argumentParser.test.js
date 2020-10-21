@@ -9,13 +9,19 @@ describe('argument parsers', () => {
     expect(filterFlag.value).equal('ry');
   });
 
-  it('handle unknown or missing flag', () => {
-    expect(argumentParser.bind(undefined, ['/usr/bin/node', '/home/ernest/Projects/adeo/app.js', '--tests=ry'])).throw('unknown flag --tests');
-    expect(argumentParser.bind(undefined, ['/usr/bin/node', '/home/ernest/Projects/adeo/app.js ry'])).throw('missing user arguments');
+  it('handle unknown flag', () => {
+    const func = () => argumentParser(['/usr/bin/node', '/home/ernest/Projects/adeo/app.js', '--tests=ry']);
+    expect(func).throw('unknown flag --tests');
+  });
+
+  it('handle missing flag', () => {
+    const func = () => argumentParser(['/usr/bin/node', '/home/ernest/Projects/adeo/app.js ']);
+    expect(func).throw('missing user arguments');
   });
 
   it('handle missing value', () => {
-    expect(argumentParser.bind(undefined, ['/usr/bin/node', '/home/ernest/Projects/adeo/app.js', '--filter='])).throw('missing value');
+    const func = () => argumentParser(['/usr/bin/node', '/home/ernest/Projects/adeo/app.js', '--filter=']);
+    expect(func).throw('missing value');
   });
 
   it('--count flag is found', () => {
